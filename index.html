@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Clean Stopwatch</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background-color: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .stopwatch {
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      text-align: center;
+      width: 320px;
+    }
+
+    .time {
+      font-size: 2.7rem;
+      margin-bottom: 25px;
+      color: #333;
+    }
+
+    .buttons button {
+      margin: 5px;
+      padding: 10px 22px;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .start { background-color: #28a745; }
+    .pause { background-color: #dc3545; }
+    .reset { background-color: #007bff; }
+    .lap   { background: violet; color: #222; }
+
+    .buttons button:hover {
+      opacity: 0.9;
+      transform: scale(1.05);
+    }
+
+    .laps {
+      margin-top: 15px;
+      max-height: 120px;
+      overflow-y: auto;
+      text-align: left;
+      font-size: 0.9rem;
+      color: #444;
+    }
+
+    .laps div {
+      padding: 4px 0;
+      border-bottom: 1px solid #eee;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="stopwatch">
+    <div class="time" id="display">00:00:00.00</div>
+    <div class="buttons">
+      <button class="start" onclick="start()">Start</button>
+      <button class="pause" onclick="pause()">Pause</button>
+      <button class="reset" onclick="reset()">Reset</button>
+      <button class="lap" onclick="lap()">Lap</button>
+    </div>
+    <div class="laps" id="laps"></div>
+  </div>
+
+  <script>
+    let startTime, elapsed = 0, timerInterval;
+    let running = false;
+
+    const display = document.getElementById("display");
+    const laps = document.getElementById("laps");
+
+    function start() {
+      if (running) return;
+      running = true;
+      startTime = Date.now() - elapsed;
+      timerInterval = setInterval(update, 10);
+    }
+
+    function pause() {
+      if (!running) return;
+      running = false;
+      clearInterval(timerInterval);
+      elapsed = Date.now() - startTime;
+    }
+
+    function reset() {
+      running = false;
+      clearInterval(timerInterval);
+      elapsed = 0;
+      display.textContent = "00:00:00.00";
+      laps.innerHTML = "";
+    }
+
+    function lap() {
+      if (!running) return;
+      const time = display.textContent;
+      const lapItem = document.createElement("div");
+      lapItem.textContent = "Lap - " + time;
+      laps.prepend(lapItem);
+    }
+
+    function update() {
+      const now = Date.now();
+      const time = now - startTime;
+
+      const hrs = Math.floor(time / 3600000);
+      const mins = Math.floor((time % 3600000) / 60000);
+      const secs = Math.floor((time % 60000) / 1000);
+      const ms = Math.floor((time % 1000) / 10);
+
+      display.textContent =
+        (hrs < 10 ? "0" + hrs : hrs) + ":" +
+        (mins < 10 ? "0" + mins : mins) + ":" +
+        (secs < 10 ? "0" + secs : secs) + "." +
+        (ms < 10 ? "0" + ms : ms);
+    }
+  </script>
+
+</body>
+</html>
